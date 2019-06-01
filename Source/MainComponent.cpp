@@ -10,7 +10,7 @@
 
 //==============================================================================
 MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
-	 , audioSource(keyboardState)
+	, audioSource(keyboardState)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -20,7 +20,6 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 	openButton.setButtonText("Play...");
 	openButton.onClick = [this] { openButtonClicked(); };
 	
-	position = 0;
 
 	addAndMakeVisible(keyboardComponent);
 	// play = false;
@@ -42,7 +41,6 @@ MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
     shutdownAudio();
-//	keyboardState.removeListener(this);
 }
 
 //==============================================================================
@@ -67,27 +65,6 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 
     // Right now we are not producing any data, in which case we need to clear the buffer
     // (to prevent the output of random noise)
-	/*
-	if (!play) return;
-
-	auto numInputChannels = fileBuffer.getNumChannels();
-	auto numOutputChannels = bufferToFill.buffer->getNumChannels();
-	auto outputSamplesRemaining = bufferToFill.numSamples;                                  // [8]
-	auto outputSamplesOffset = bufferToFill.startSample;                                    // [9]
-	auto bufferSamplesRemaining = fileBuffer.getNumSamples() - position;                // [10]
-	auto samplesThisTime = jmin(outputSamplesRemaining, bufferSamplesRemaining);       // [11]
-	
-	for (auto channel = 0; channel < numOutputChannels; ++channel)
-	{
-		bufferToFill.buffer->copyFrom(channel,                                         // [12]
-			outputSamplesOffset,                             //  [12.1]
-			fileBuffer,                                      //  [12.2]
-			channel % numInputChannels,                      //  [12.3]
-			position,                                        //  [12.4]
-			samplesThisTime);                                //  [12.5]
-	}
-	position += samplesThisTime;                                                        // [15]
-	*/
 
 	audioSource.getNextAudioBlock(bufferToFill);
 }
@@ -123,41 +100,5 @@ void MainComponent::resized()
 void MainComponent::openButtonClicked ()
 {
 	shutdownAudio();
-	/*
-	File file("C:\\Users\\dorcg\\Desktop\\1_A2_5SlowMP.wav");
 	
-	std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(file));
-
-	if (reader.get() != nullptr) {
-		fileBuffer.setSize(reader->numChannels, (int)reader->lengthInSamples);
-		reader->read(&fileBuffer, 0, (int)reader->lengthInSamples, 0, true, true);
-		setAudioChannels(0, 2);
-	}
-
-	position = 0;
-	*/
 }
-
-
-// These methods handle callbacks from the midi device + on-screen keyboard..
-/*
-void MainComponent::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message)
-{
-	keyboardState.processNextMidiEvent(message);
-	audioSource.getMidiCollector()->addMessageToQueue(message);
-}
-
-void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
-{
-	auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
-	audioSource.getMidiCollector()->addMessageToQueue(m);
-	play = true;
-}
-
-void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
-{
-	auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
-	audioSource.getMidiCollector()->addMessageToQueue(m);
-	play = false;
-}
-*/

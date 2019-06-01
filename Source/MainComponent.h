@@ -37,21 +37,11 @@ public:
 
 private:
     //==============================================================================
-    // Your private member variables go here...
-	AudioSampleBuffer fileBuffer;
-	int position = 0;
-	
 	TextButton openButton;
 	void openButtonClicked();
 
-	MidiKeyboardState keyboardState;            // [5]
-	MidiKeyboardComponent keyboardComponent;    // [6]
-/*
-	void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) override;
-	void handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
-	void handleNoteOff(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
-*/
-	bool play = false;
+	MidiKeyboardState keyboardState;  
+	MidiKeyboardComponent keyboardComponent;   
 
 	SynthAudioSource audioSource;
 

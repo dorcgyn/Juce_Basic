@@ -3,8 +3,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SynthAudioSource.h"
 
-SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyState)
-	: keyboardState(keyState)
+SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState)
+	: keyboardState(keyboardState)
 {
 	for (auto i = 0; i < 4; ++i)
 		synth.addVoice(new SamplerVoice());
