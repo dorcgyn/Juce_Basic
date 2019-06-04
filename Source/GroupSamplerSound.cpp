@@ -68,7 +68,7 @@ Group GroupManager::getGroup(const String& name)
 
 void GroupManager::enableAll()
 {
-	for (auto& const groupIter : groupMap) 
+	for (auto& groupIter : groupMap) 
 	{
 		groupIter.second.setEnable(true);
 	}
@@ -76,7 +76,7 @@ void GroupManager::enableAll()
 
 void GroupManager::disableAll()
 {
-	for (auto& const groupIter : groupMap)
+	for (auto& groupIter : groupMap)
 	{
 		groupIter.second.setEnable(false);
 	}
