@@ -10,7 +10,7 @@
 
 //==============================================================================
 MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
-	, audioSource(keyboardState)
+	, audioSource(keyboardState, keyboardComponent)
 {
     // Make sure you set the size of the component after
     // you add any child components.

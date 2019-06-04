@@ -9,7 +9,7 @@ namespace juce
 	class SynthAudioSource : public AudioSource
 	{
 	public:
-		SynthAudioSource(MidiKeyboardState& keyState);
+		SynthAudioSource(MidiKeyboardState& keyState, MidiKeyboardComponent& keyboardComponent);
 
 		void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override;
 
@@ -19,10 +19,11 @@ namespace juce
 
 		MidiMessageCollector* getMidiCollector();
 
-		void load(String& dirPath, String& groupName);
+		void load(const String& dirPath, const String& groupName);
 
 	private:
 		MidiKeyboardState& keyboardState;
+		MidiKeyboardComponent& keyboardComponent;
 		AudioReader audioReader;
 		Synthesiser synth;
 		MidiMessageCollector midiCollector;

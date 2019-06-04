@@ -7,12 +7,12 @@ namespace juce
 	class Group
 	{
 	public:
-		Group(String& name);
+		Group(const String& name);
 		Group();
 		~Group();
 		bool isEnable();
-		void const setEnable(bool enable);
-		String getGroupName();
+		void setEnable(bool enableFlag);
+		String getGroupName() const;
 
 	private:
 		String name;
@@ -47,7 +47,7 @@ namespace juce
 			double attackTimeSecs,
 			double releaseTimeSecs,
 			double maxSampleLengthSeconds,
-			Group& group);
+			const Group& group);
 
 		/** Destructor. */
 		~GroupSamplerSound() override;
@@ -63,7 +63,7 @@ namespace juce
 	public:
 		GroupManager();
 		~GroupManager();
-		Group getGroup(String& name);
+		Group getGroup(const String& name);
 		void enableAll();
 		void disableAll();
 		void enableByName(String& name);

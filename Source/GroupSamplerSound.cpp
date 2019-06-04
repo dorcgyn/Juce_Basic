@@ -13,7 +13,7 @@ GroupSamplerSound::GroupSamplerSound(const String& soundName,
 									 double attackTimeSecs,
 									 double releaseTimeSecs,
 									 double maxSampleLengthSeconds,
-									 Group& group)
+									 const Group& group)
 	: SamplerSound::SamplerSound(soundName, source, notes, midiNoteForNormalPitch, attackTimeSecs, releaseTimeSecs, maxSampleLengthSeconds),
 	group(group)
 {
@@ -32,7 +32,7 @@ bool GroupSamplerSound::appliesToNote(int midiNoteNumber)
 }
 
 // Implementation of Group
-Group::Group(String& name) : name(name), enable(true) {};
+Group::Group(const String& name) : name(name), enable(true) {};
 Group::Group() : Group::Group(String()) {};
 
 Group::~Group() {};
@@ -42,12 +42,12 @@ bool Group::isEnable()
 	return enable;
 }
 
-void const Group::setEnable(bool enable)
+void Group::setEnable(bool enableFlag)
 {
-	this->enable = enable;
+	this->enable = enableFlag;
 }
 
-String Group::getGroupName()
+String Group::getGroupName() const
 {
 	return name;
 }
@@ -56,7 +56,7 @@ String Group::getGroupName()
 GroupManager::GroupManager() {};
 GroupManager::~GroupManager() {};
 
-Group GroupManager::getGroup(String& name)
+Group GroupManager::getGroup(const String& name)
 {
 	if (groupMap.find(name) == groupMap.end())
 	{
@@ -84,7 +84,7 @@ void GroupManager::disableAll()
 
 void GroupManager::enableByName(String& name)
 {
-	auto& groupIter = groupMap.find(name);
+	const auto& groupIter = groupMap.find(name);
 	if (groupIter != groupMap.end())
 	{
 		groupIter->second.setEnable(true);
@@ -98,7 +98,7 @@ void GroupManager::enableByName(String& name)
 
 void GroupManager::disableByName(String& name)
 {
-	auto& groupIter = groupMap.find(name);
+	const auto& groupIter = groupMap.find(name);
 	if (groupIter != groupMap.end())
 	{
 		groupIter->second.setEnable(false);

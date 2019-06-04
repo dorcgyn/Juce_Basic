@@ -3,8 +3,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SynthAudioSource.h"
 
-SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState)
+SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState, MidiKeyboardComponent& keyboardComponent)
 	: keyboardState(keyboardState)
+	, keyboardComponent(keyboardComponent)
 {
 	for (auto i = 0; i < 4; ++i)
 		synth.addVoice(new SamplerVoice());
@@ -29,9 +30,9 @@ SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState)
 	
 }
 
-void SynthAudioSource::load(String& dirPath, String& groupName)
+void SynthAudioSource::load(const String& dirPath, const String& groupName)
 {
-	audioReader.load(synth, dirPath, groupName);
+	audioReader.load(synth, dirPath, groupName, keyboardComponent);
 }
 
 void SynthAudioSource::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)

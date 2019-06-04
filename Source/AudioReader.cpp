@@ -9,17 +9,18 @@ AudioReader::AudioReader()
 
 AudioReader::~AudioReader() {}
 
-void AudioReader::load(Synthesiser& synth, String& dirPath, String& groupName)
+void AudioReader::load(Synthesiser& synth, const String& dirPath, const String& groupName, MidiKeyboardComponent& /*keyboardComponent*/)
 {
-	Array<File>& files = getAllFiles(dirPath);
-	Group& group = groupManager.getGroup(groupName);
+	const Array<File>& files = getAllFiles(dirPath);
+	const Group& group = groupManager.getGroup(groupName);
 	for (File file : files)
 	{
-		synth.addSound(parseFileName(file, group));
+		GroupSamplerSound* sound = parseFileName(file, group);
+		synth.addSound(sound);
 	}
 }
 
-Array<File> AudioReader::getAllFiles(String& path)
+Array<File> AudioReader::getAllFiles(const String& path)
 {
 	File dir(path);
 	return dir.findChildFiles(dir.findFiles, false);
@@ -27,9 +28,9 @@ Array<File> AudioReader::getAllFiles(String& path)
 
 
 // assume file name is rootKey_startKey_numKey_???
-GroupSamplerSound* AudioReader::parseFileName(File& file, Group& group)
+GroupSamplerSound* AudioReader::parseFileName(File& file, const Group& group)
 {
-	String& fileName = file.getFileNameWithoutExtension();
+	const String& fileName = file.getFileNameWithoutExtension();
 	
 	if (!fileName.contains("_")) {
 		return nullptr;
