@@ -10,13 +10,22 @@ namespace juce
 		Group(const String& name);
 		Group();
 		~Group();
+		
 		bool isEnable();
 		void setEnable(bool enableFlag);
+		
 		String getGroupName() const;
 
+		void setKeyColour(Colour newColour);
+		Colour getkeyColour() const;
+
+		void addActiveMidiNote(int midiNote);
+		bool isActiveMidiKey(int midiNote) const;
 	private:
 		String name;
 		bool enable;
+		SortedSet<int> activeMidiNotes;
+		Colour keyColour;
 	};
 
 	class GroupSamplerSound : public SamplerSound
@@ -47,7 +56,7 @@ namespace juce
 			double attackTimeSecs,
 			double releaseTimeSecs,
 			double maxSampleLengthSeconds,
-			const Group& group);
+			Group& group);
 
 		/** Destructor. */
 		~GroupSamplerSound() override;
@@ -63,12 +72,17 @@ namespace juce
 	public:
 		GroupManager();
 		~GroupManager();
-		Group getGroup(const String& name);
+
 		void enableAll();
 		void disableAll();
+		
 		void enableByName(String& name);
 		void disableByName(String& name);
+
+		Group* getGroup(const String& name);
+		Array<String> getAllGroupNames() const;
+		Group* getFirstActiveGroup(int midiNote) const;
 	private:
-		std::map<String, Group> groupMap;
+		HashMap<String, Group*> groupMap;
 	};
 }

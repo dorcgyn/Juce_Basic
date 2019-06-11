@@ -32,7 +32,7 @@ SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState, MidiKeyboar
 
 void SynthAudioSource::load(const String& dirPath, const String& groupName)
 {
-	audioReader.load(synth, dirPath, groupName, keyboardComponent);
+	audioReader.load(synth, dirPath, *(this->groupManager.getGroup(groupName)), keyboardComponent);
 }
 
 void SynthAudioSource::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)
@@ -57,4 +57,9 @@ void SynthAudioSource::getNextAudioBlock(const AudioSourceChannelInfo & bufferTo
 MidiMessageCollector* SynthAudioSource::getMidiCollector()
 {
 	return &midiCollector;
+}
+
+GroupManager* SynthAudioSource::getGroupManager()
+{
+	return &groupManager;
 }

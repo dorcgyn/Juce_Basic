@@ -13,10 +13,15 @@ GroupSamplerSound::GroupSamplerSound(const String& soundName,
 									 double attackTimeSecs,
 									 double releaseTimeSecs,
 									 double maxSampleLengthSeconds,
-									 const Group& group)
+									 Group& group)
 	: SamplerSound::SamplerSound(soundName, source, notes, midiNoteForNormalPitch, attackTimeSecs, releaseTimeSecs, maxSampleLengthSeconds),
 	group(group)
 {
+	int startIndex = notes.findNextSetBit(0);
+	while (startIndex != -1) {
+		group.addActiveMidiNote(startIndex);
+		startIndex = notes.findNextSetBit(startIndex + 1);
+	}
 }
 
 GroupSamplerSound::~GroupSamplerSound()
@@ -32,7 +37,12 @@ bool GroupSamplerSound::appliesToNote(int midiNoteNumber)
 }
 
 // Implementation of Group
-Group::Group(const String& name) : name(name), enable(true) {};
+Group::Group(const String& name) : 
+	name(name), 
+	enable(true), 
+	keyColour(Colours::lightblue)
+{};
+
 Group::Group() : Group::Group(String()) {};
 
 Group::~Group() {};
@@ -52,62 +62,87 @@ String Group::getGroupName() const
 	return name;
 }
 
+void Group::setKeyColour(Colour newColour)
+{
+	this->keyColour = newColour;
+}
+
+Colour Group::getkeyColour() const
+{
+	return this->keyColour;
+}
+
+void Group::addActiveMidiNote(int midiNote)
+{
+	this->activeMidiNotes.add(midiNote);
+}
+
+bool Group::isActiveMidiKey(int midiNote) const
+{
+	return this->activeMidiNotes.contains(midiNote);
+}
+
+
 // Implementation of Group Manager
 GroupManager::GroupManager() {};
 GroupManager::~GroupManager() {};
 
-Group GroupManager::getGroup(const String& name)
+Group* GroupManager::getGroup(const String& name)
 {
-	if (groupMap.find(name) == groupMap.end())
+	if (!groupMap.contains(name))
 	{
-		Group group(name);
-		groupMap[name] = name;
+		Group* group = new Group(name);
+		groupMap.set(name, group);
 	}
-	return groupMap.find(name)->second;
+	return groupMap[name];
 }
 
 void GroupManager::enableAll()
 {
-	for (auto& groupIter : groupMap) 
+	for (auto group : groupMap)
 	{
-		groupIter.second.setEnable(true);
+		group->setEnable(true);
 	}
 }
 
 void GroupManager::disableAll()
 {
-	for (auto& groupIter : groupMap)
+	for (auto group : groupMap)
 	{
-		groupIter.second.setEnable(false);
+		group->setEnable(false);
 	}
 }
 
 void GroupManager::enableByName(String& name)
 {
-	const auto& groupIter = groupMap.find(name);
-	if (groupIter != groupMap.end())
-	{
-		groupIter->second.setEnable(true);
-	}
-	else 
-	{
-		// No group in this name
-		jassertfalse;
-	}
+	jassert(groupMap.contains(name));
+	groupMap[name]->setEnable(true);
 }
 
 void GroupManager::disableByName(String& name)
 {
-	const auto& groupIter = groupMap.find(name);
-	if (groupIter != groupMap.end())
+	jassert(groupMap.contains(name));
+	groupMap[name]->setEnable(false);
+}
+
+Group* GroupManager::getFirstActiveGroup(int midiNote) const
+{
+	for (auto group : groupMap)
 	{
-		groupIter->second.setEnable(false);
+		if (group->isEnable() && group->isActiveMidiKey(midiNote))
+			return group;
 	}
-	else
+	return nullptr;
+}
+
+Array<String> GroupManager::getAllGroupNames() const
+{
+	Array<String> result;
+	for (auto begin = groupMap.begin(); begin != groupMap.end(); begin.next())
 	{
-		// No group in this name
-		jassertfalse;
+		result.add(begin.getKey());
 	}
+	return result;
 }
 
 }

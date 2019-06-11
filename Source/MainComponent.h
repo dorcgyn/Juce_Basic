@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SynthAudioSource.h"
+#include "ColourMidiKeyboardComponent.h"
 
 
 //==============================================================================
@@ -18,8 +19,6 @@
     your controls and content.
 */
 class MainComponent   : public AudioAppComponent
-//	public MidiInputCallback ,
-//	public MidiKeyboardStateListener
 {
 public:
     //==============================================================================
@@ -40,8 +39,13 @@ private:
 	TextButton openButton;
 	void openButtonClicked();
 
+	ComboBox groupList;
+	Label groupListLabel;
+	int activeGroupIdx = 0;
+
 	MidiKeyboardState keyboardState;  
-	MidiKeyboardComponent keyboardComponent;   
+	ColourMidiKeyboardComponent keyboardComponent;
+	// MidiKeyboardComponent keyboardComponent;
 
 	SynthAudioSource audioSource;
 

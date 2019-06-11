@@ -11,14 +11,12 @@ namespace juce
 		AudioReader();
 		~AudioReader();
 
-		void load(Synthesiser& synth, const String& dirPath, const String& groupName, MidiKeyboardComponent& keyboardComponent);
+		void load(Synthesiser& synth, const String& dirPath, Group& group, MidiKeyboardComponent& keyboardComponent);
 		
 	private:
 		AudioFormatManager formatManager;
-		GroupManager groupManager;
-
 
 		Array<File> getAllFiles(const String& path);
-		GroupSamplerSound* parseFileName(File& file, const Group& group);
+		GroupSamplerSound* parseFileName(File& file, Group& group);
 	};
 }

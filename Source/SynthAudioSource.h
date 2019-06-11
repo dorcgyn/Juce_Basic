@@ -21,12 +21,15 @@ namespace juce
 
 		void load(const String& dirPath, const String& groupName);
 
+		GroupManager* getGroupManager();
+
 	private:
 		MidiKeyboardState& keyboardState;
 		MidiKeyboardComponent& keyboardComponent;
 		AudioReader audioReader;
 		Synthesiser synth;
 		MidiMessageCollector midiCollector;
+		GroupManager groupManager;
 	};
 
 }

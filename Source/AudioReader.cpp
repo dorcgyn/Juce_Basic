@@ -9,12 +9,16 @@ AudioReader::AudioReader()
 
 AudioReader::~AudioReader() {}
 
-void AudioReader::load(Synthesiser& synth, const String& dirPath, const String& groupName, MidiKeyboardComponent& /*keyboardComponent*/)
+void AudioReader::load(Synthesiser& synth, const String& dirPath, Group& group, MidiKeyboardComponent& /*keyboardComponent*/)
 {
 	const Array<File>& files = getAllFiles(dirPath);
-	const Group& group = groupManager.getGroup(groupName);
 	for (File file : files)
 	{
+		String extention = file.getFileExtension();
+		if (extention != ".wav") {
+			continue;
+		}
+
 		GroupSamplerSound* sound = parseFileName(file, group);
 		synth.addSound(sound);
 	}
@@ -28,7 +32,7 @@ Array<File> AudioReader::getAllFiles(const String& path)
 
 
 // assume file name is rootKey_startKey_numKey_???
-GroupSamplerSound* AudioReader::parseFileName(File& file, const Group& group)
+GroupSamplerSound* AudioReader::parseFileName(File& file, Group& group)
 {
 	const String& fileName = file.getFileNameWithoutExtension();
 	

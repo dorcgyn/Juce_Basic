@@ -26,6 +26,7 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 
 	// load audioGroup
 	audioSource.load(String("C:\\Users\\dorcg\\Desktop\\test"), String("group1"));
+	audioSource.load(String("C:\\Users\\dorcg\\Desktop\\test1"), String("group2"));
 
 	// VERY VERY important
 	setAudioChannels(0, 2);
@@ -35,6 +36,29 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 	if (!deviceManager.isMidiInputEnabled(newInput))
 		deviceManager.setMidiInputEnabled(newInput, true);
 	deviceManager.addMidiInputCallback(newInput, audioSource.getMidiCollector());
+
+	// keyboard color
+	keyboardComponent.setGroupManager(audioSource.getGroupManager());
+
+	// pick group combobox
+	addAndMakeVisible(groupListLabel);
+	groupListLabel.setText("Active Group:", dontSendNotification);
+	groupListLabel.attachToComponent(&groupList, true);
+
+	addAndMakeVisible(groupList);
+	groupList.setTextWhenNoChoicesAvailable("No Group Active");
+	Array<String> groupNameList = audioSource.getGroupManager()->getAllGroupNames();
+	groupList.addItemList(StringArray(groupNameList), 1);
+
+	groupList.onChange = [this] {
+		int selectedIndex = groupList.getSelectedItemIndex();
+		String itemText = groupList.getItemText(selectedIndex);
+		audioSource.getGroupManager()->disableAll();
+		audioSource.getGroupManager()->enableByName(itemText);
+		keyboardComponent.repaint();
+	};
+
+	groupList.setSelectedItemIndex(0);
 }
 
 MainComponent::~MainComponent()
@@ -92,6 +116,8 @@ void MainComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 	openButton.setBounds(10, 10, getWidth() - 20, 20);
+
+	groupList.setBounds(200, 500, getWidth() - 210, 20);
 
 	auto area = getLocalBounds();
 	keyboardComponent.setBounds(area.removeFromBottom(80).reduced(8));

@@ -3,6 +3,10 @@
 <JUCERPROJECT id="uszRyh" name="AudioAppProject" projectType="guiapp" jucerVersion="5.4.3">
   <MAINGROUP id="NKDnn4" name="AudioAppProject">
     <GROUP id="{290C901B-9AB2-4911-0417-9C616AF9495D}" name="Source">
+      <FILE id="hqNLiY" name="ColourMidiKeyboardComponent.cpp" compile="1"
+            resource="0" file="Source/ColourMidiKeyboardComponent.cpp"/>
+      <FILE id="jRJI5e" name="ColourMidiKeyboardComponent.h" compile="0"
+            resource="0" file="Source/ColourMidiKeyboardComponent.h"/>
       <FILE id="FGq8IW" name="AudioReader.cpp" compile="1" resource="0" file="Source/AudioReader.cpp"/>
       <FILE id="nGuWkC" name="AudioReader.h" compile="0" resource="0" file="Source/AudioReader.h"/>
       <FILE id="sIfi8j" name="GroupSamplerSound.cpp" compile="1" resource="0"
