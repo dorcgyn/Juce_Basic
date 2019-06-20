@@ -112,7 +112,7 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-	groupNameTextEditor.setBounds(10, 10, getWidth() - 210, 20);
+	groupNameTextEditor.setBounds(200, 10, getWidth() - 210, 20);
 	loadAudioButton.setBounds(10, 50, getWidth() - 20, 20);
 
 	groupList.setBounds(200, 500, getWidth() - 210, 20);
@@ -125,13 +125,13 @@ void MainComponent::loadAudioButtonClicked()
 {
 	String newGroupName = groupNameTextEditor.getText();
 	if (newGroupName.isEmpty()) {
-
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, String("Error In Load Group"), String("Group Name should't be empty!"));
 		return;
 	}
 
 	Array<String> groupNameList = audioSource.getGroupManager()->getAllGroupNames();
 	if (groupNameList.contains(newGroupName)) {
-
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, String("Error In Load Group"), String("Group Name already exists!"));
 		return;
 	}
 
@@ -148,5 +148,7 @@ void MainComponent::loadAudioButtonClicked()
 
 		groupNameTextEditor.clear();
 		groupNameTextEditor.repaint();
+
+		AlertWindow::showMessageBox(AlertWindow::InfoIcon, String("New Group Created"), String("Create Group " + newGroupName + " successfully!"));
 	}
 }
