@@ -1,4 +1,4 @@
-﻿/*
+/*
   ==============================================================================
 
     This file was auto-generated!
@@ -36,16 +36,16 @@ public:
 
 private:
     //==============================================================================
-	TextButton openButton;
-	void openButtonClicked();
+	TextButton loadAudioButton;
+	void loadAudioButtonClicked();
+	TextEditor groupNameTextEditor;
+	Label groupNameLabel;
 
 	ComboBox groupList;
 	Label groupListLabel;
-	int activeGroupIdx = 0;
 
 	MidiKeyboardState keyboardState;  
 	ColourMidiKeyboardComponent keyboardComponent;
-	// MidiKeyboardComponent keyboardComponent;
 
 	SynthAudioSource audioSource;
 

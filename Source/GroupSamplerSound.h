@@ -22,6 +22,10 @@ namespace juce
 		void addActiveMidiNote(int midiNote);
 		bool isActiveMidiKey(int midiNote) const;
 	private:
+		// non-copy
+		Group(const Group&);
+		Group& operator=(const Group&);
+
 		String name;
 		bool enable;
 		SortedSet<int> activeMidiNotes;
@@ -64,7 +68,7 @@ namespace juce
 		bool appliesToNote(int midiNoteNumber) override;
 
 	private:
-		Group group;
+		Group& group;
 	};
 
 	class GroupManager

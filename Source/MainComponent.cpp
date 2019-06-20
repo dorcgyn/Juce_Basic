@@ -16,17 +16,16 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
     // you add any child components.
     setSize (800, 600);
 
-	addAndMakeVisible(&openButton);
-	openButton.setButtonText("Play...");
-	openButton.onClick = [this] { openButtonClicked(); };
+	addAndMakeVisible(&loadAudioButton);
+	loadAudioButton.setButtonText("Load Audio Group");
+	loadAudioButton.onClick = [this] { loadAudioButtonClicked(); };
 	
+	addAndMakeVisible(&groupNameTextEditor);
+	addAndMakeVisible(&groupNameLabel);
+	groupNameLabel.setText("New Group Name", dontSendNotification);
+	groupNameLabel.attachToComponent(&groupNameTextEditor, true);
 
 	addAndMakeVisible(keyboardComponent);
-	// play = false;
-
-	// load audioGroup
-	audioSource.load(String("C:\\Users\\dorcg\\Desktop\\test"), String("group1"));
-	audioSource.load(String("C:\\Users\\dorcg\\Desktop\\test1"), String("group2"));
 
 	// VERY VERY important
 	setAudioChannels(0, 2);
@@ -46,7 +45,7 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 	groupListLabel.attachToComponent(&groupList, true);
 
 	addAndMakeVisible(groupList);
-	groupList.setTextWhenNoChoicesAvailable("No Group Active");
+	groupList.setTextWhenNoChoicesAvailable("No Group Available");
 	Array<String> groupNameList = audioSource.getGroupManager()->getAllGroupNames();
 	groupList.addItemList(StringArray(groupNameList), 1);
 
@@ -57,8 +56,6 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 		audioSource.getGroupManager()->enableByName(itemText);
 		keyboardComponent.repaint();
 	};
-
-	groupList.setSelectedItemIndex(0);
 }
 
 MainComponent::~MainComponent()
@@ -115,7 +112,8 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-	openButton.setBounds(10, 10, getWidth() - 20, 20);
+	groupNameTextEditor.setBounds(10, 10, getWidth() - 210, 20);
+	loadAudioButton.setBounds(10, 50, getWidth() - 20, 20);
 
 	groupList.setBounds(200, 500, getWidth() - 210, 20);
 
@@ -123,8 +121,32 @@ void MainComponent::resized()
 	keyboardComponent.setBounds(area.removeFromBottom(80).reduced(8));
 }
 
-void MainComponent::openButtonClicked ()
+void MainComponent::loadAudioButtonClicked()
 {
-	shutdownAudio();
-	
+	String newGroupName = groupNameTextEditor.getText();
+	if (newGroupName.isEmpty()) {
+
+		return;
+	}
+
+	Array<String> groupNameList = audioSource.getGroupManager()->getAllGroupNames();
+	if (groupNameList.contains(newGroupName)) {
+
+		return;
+	}
+
+	FileChooser audioChooser("Please select the directory to load .wav file.",
+		File::getSpecialLocation(File::userHomeDirectory));
+	if (audioChooser.browseForDirectory())
+	{
+		audioSource.load(audioChooser.getResult().getFullPathName(), newGroupName);
+		audioSource.getGroupManager()->disableByName(newGroupName);
+
+		groupList.clear();
+		groupNameList = audioSource.getGroupManager()->getAllGroupNames();
+		groupList.addItemList(StringArray(groupNameList), 1);
+
+		groupNameTextEditor.clear();
+		groupNameTextEditor.repaint();
+	}
 }

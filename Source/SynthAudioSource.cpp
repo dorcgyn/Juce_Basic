@@ -8,26 +8,7 @@ SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState, MidiKeyboar
 	, keyboardComponent(keyboardComponent)
 {
 	for (auto i = 0; i < 4; ++i)
-		synth.addVoice(new SamplerVoice());
-
-	
-	/*
-	formatManager.registerBasicFormats();
-
-	for (auto i = 0; i < 4; ++i)
-		synth.addVoice(new SamplerVoice());
-
-	File file("C:\\Users\\dorcg\\Desktop\\1_A2_5SlowMP.wav");
-	// 0_128_66_    5_1_123
-	std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(file));
-
-	BigInteger note1;
-	note1.setRange(0, 128, true);
-
-	// finally, add our sound
-	synth.addSound(new SamplerSound("1", *reader, note1, 66, 0, 0, 100.0));
-	*/
-	
+		synth.addVoice(new SamplerVoice());	
 }
 
 void SynthAudioSource::load(const String& dirPath, const String& groupName)
