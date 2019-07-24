@@ -11,8 +11,8 @@ namespace juce
 		AudioReader();
 		~AudioReader();
 
-		void load(Synthesiser& synth, const String& dirPath, Group& group, MidiKeyboardComponent& keyboardComponent);
-		
+		void loadDir(Synthesiser& synth, const String& dirPath, Group& group, MidiKeyboardComponent& keyboardComponent);
+		void loadFile(Synthesiser& synth, const String& filePath, Group& group, MidiKeyboardComponent& keyboardComponent);
 	private:
 		AudioFormatManager formatManager;
 

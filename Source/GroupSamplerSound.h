@@ -4,6 +4,9 @@
 
 namespace juce
 {
+	// Declare GroupSamplerSound first, required for using in Group
+	class GroupSamplerSound;
+
 	class Group
 	{
 	public:
@@ -21,6 +24,9 @@ namespace juce
 
 		void addActiveMidiNote(int midiNote);
 		bool isActiveMidiKey(int midiNote) const;
+
+		ValueTree* serailzeToValueTree() const;
+
 	private:
 		// non-copy
 		Group(const Group&);
@@ -60,15 +66,22 @@ namespace juce
 			double attackTimeSecs,
 			double releaseTimeSecs,
 			double maxSampleLengthSeconds,
-			Group& group);
+			Group& group,
+			const String& filePath);
 
 		/** Destructor. */
 		~GroupSamplerSound() override;
 
 		bool appliesToNote(int midiNoteNumber) override;
+		
+		ValueTree* serailzeToValueTree() const;
 
 	private:
 		Group& group;
+		String filePath;
+		double attackTimeSecs;
+		double releaseTimeSecs;
+		double maxSampleLengthSeconds;
 	};
 
 	class GroupManager
@@ -86,6 +99,8 @@ namespace juce
 		Group* getGroup(const String& name);
 		Array<String> getAllGroupNames() const;
 		Group* getFirstActiveGroup(int midiNote) const;
+
+		void cleanup();
 	private:
 		HashMap<String, Group*> groupMap;
 	};

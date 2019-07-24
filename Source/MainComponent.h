@@ -30,6 +30,8 @@ public:
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
 
+	void reload();
+
     //==============================================================================
     void paint (Graphics& g) override;
     void resized() override;
@@ -38,6 +40,14 @@ private:
     //==============================================================================
 	TextButton loadAudioButton;
 	void loadAudioButtonClicked();
+
+	TextButton saveButton;
+	void saveButtonClicked();
+
+	TextButton loadButton;
+	void loadButtonClicked();
+
+
 	TextEditor groupNameTextEditor;
 	Label groupNameLabel;
 

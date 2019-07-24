@@ -3,6 +3,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SynthAudioSource.h"
 
+const ReferenceCountedArray<SynthesiserSound>& GroupSynthesiser::getAllSounds() const
+{
+	return sounds;
+}
+
 SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState, MidiKeyboardComponent& keyboardComponent)
 	: keyboardState(keyboardState)
 	, keyboardComponent(keyboardComponent)
@@ -11,9 +16,20 @@ SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState, MidiKeyboar
 		synth.addVoice(new SamplerVoice());	
 }
 
-void SynthAudioSource::load(const String& dirPath, const String& groupName)
+void SynthAudioSource::loadDir(const String& dirPath, const String& groupName)
 {
-	audioReader.load(synth, dirPath, *(this->groupManager.getGroup(groupName)), keyboardComponent);
+	audioReader.loadDir(synth, dirPath, *(this->groupManager.getGroup(groupName)), keyboardComponent);
+}
+
+void SynthAudioSource::loadFile(const String& filePath, const String& groupName)
+{
+	audioReader.loadFile(synth, filePath, *(this->groupManager.getGroup(groupName)), keyboardComponent);
+}
+
+void SynthAudioSource::cleanup()
+{
+	synth.clearSounds();
+	groupManager.cleanup();
 }
 
 void SynthAudioSource::prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate)
@@ -43,4 +59,9 @@ MidiMessageCollector* SynthAudioSource::getMidiCollector()
 GroupManager* SynthAudioSource::getGroupManager()
 {
 	return &groupManager;
+}
+
+GroupSynthesiser& SynthAudioSource::getSynthesiser()
+{
+	return synth;
 }

@@ -13,9 +13,14 @@ GroupSamplerSound::GroupSamplerSound(const String& soundName,
 									 double attackTimeSecs,
 									 double releaseTimeSecs,
 									 double maxSampleLengthSeconds,
-									 Group& group)
+									 Group& group,
+									 const String& filePath)
 	: SamplerSound::SamplerSound(soundName, source, notes, midiNoteForNormalPitch, attackTimeSecs, releaseTimeSecs, maxSampleLengthSeconds),
-	group(group)
+	group(group), 
+	filePath(filePath), 
+	attackTimeSecs(attackTimeSecs), 
+	releaseTimeSecs(releaseTimeSecs), 
+	maxSampleLengthSeconds(maxSampleLengthSeconds)
 {
 	int startIndex = notes.findNextSetBit(0);
 	while (startIndex != -1) {
@@ -34,6 +39,18 @@ bool GroupSamplerSound::appliesToNote(int midiNoteNumber)
 		return SamplerSound::appliesToNote(midiNoteNumber);
 	}
 	return false;
+}
+
+ValueTree* GroupSamplerSound::serailzeToValueTree() const
+{
+	ValueTree* soundValueTree = new ValueTree{"Sound"};
+	soundValueTree->setProperty("name", this->getName(), nullptr);
+	soundValueTree->setProperty("filePath", filePath, nullptr);
+	soundValueTree->setProperty("attackTimeSecs", attackTimeSecs, nullptr);
+	soundValueTree->setProperty("releaseTimeSecs", releaseTimeSecs, nullptr);
+	soundValueTree->setProperty("maxSampleLengthSeconds", maxSampleLengthSeconds, nullptr);
+	soundValueTree->setProperty("group", group.getGroupName(), nullptr);
+	return soundValueTree;
 }
 
 // Implementation of Group
@@ -80,6 +97,13 @@ void Group::addActiveMidiNote(int midiNote)
 bool Group::isActiveMidiKey(int midiNote) const
 {
 	return this->activeMidiNotes.contains(midiNote);
+}
+
+ValueTree* Group::serailzeToValueTree() const
+{
+	ValueTree* groupValueTree = new ValueTree{"Group"};
+	groupValueTree->setProperty("name", name, nullptr);
+	return groupValueTree;
 }
 
 
@@ -143,6 +167,11 @@ Array<String> GroupManager::getAllGroupNames() const
 		result.add(begin.getKey());
 	}
 	return result;
+}
+
+void GroupManager::cleanup()
+{
+	groupMap.clear();
 }
 
 }

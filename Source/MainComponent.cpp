@@ -7,6 +7,7 @@
 */
 
 #include "MainComponent.h"
+#include "Config.h"
 
 //==============================================================================
 MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
@@ -19,6 +20,14 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 	addAndMakeVisible(&loadAudioButton);
 	loadAudioButton.setButtonText("Load Audio Group");
 	loadAudioButton.onClick = [this] { loadAudioButtonClicked(); };
+
+	addAndMakeVisible(&saveButton);
+	saveButton.setButtonText("Save");
+	saveButton.onClick = [this] { saveButtonClicked(); };
+
+	addAndMakeVisible(&loadButton);
+	loadButton.setButtonText("Load");
+	loadButton.onClick = [this] { loadButtonClicked(); };
 	
 	addAndMakeVisible(&groupNameTextEditor);
 	addAndMakeVisible(&groupNameLabel);
@@ -46,11 +55,11 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 
 	addAndMakeVisible(groupList);
 	groupList.setTextWhenNoChoicesAvailable("No Group Available");
-	Array<String> groupNameList = audioSource.getGroupManager()->getAllGroupNames();
-	groupList.addItemList(StringArray(groupNameList), 1);
+	reload();
 
 	groupList.onChange = [this] {
 		int selectedIndex = groupList.getSelectedItemIndex();
+		if (selectedIndex < 0) return;
 		String itemText = groupList.getItemText(selectedIndex);
 		audioSource.getGroupManager()->disableAll();
 		audioSource.getGroupManager()->enableByName(itemText);
@@ -114,6 +123,8 @@ void MainComponent::resized()
     // update their positions.
 	groupNameTextEditor.setBounds(200, 10, getWidth() - 210, 20);
 	loadAudioButton.setBounds(10, 50, getWidth() - 20, 20);
+	saveButton.setBounds(10, 80, getWidth() - 20, 20);
+	loadButton.setBounds(10, 120, getWidth() - 20, 20);
 
 	groupList.setBounds(200, 500, getWidth() - 210, 20);
 
@@ -139,16 +150,53 @@ void MainComponent::loadAudioButtonClicked()
 		File::getSpecialLocation(File::userHomeDirectory));
 	if (audioChooser.browseForDirectory())
 	{
-		audioSource.load(audioChooser.getResult().getFullPathName(), newGroupName);
+		audioSource.loadDir(audioChooser.getResult().getFullPathName(), newGroupName);
 		audioSource.getGroupManager()->disableByName(newGroupName);
 
-		groupList.clear();
-		groupNameList = audioSource.getGroupManager()->getAllGroupNames();
-		groupList.addItemList(StringArray(groupNameList), 1);
-
-		groupNameTextEditor.clear();
-		groupNameTextEditor.repaint();
+		reload();
 
 		AlertWindow::showMessageBox(AlertWindow::InfoIcon, String("New Group Created"), String("Create Group " + newGroupName + " successfully!"));
 	}
+}
+
+void MainComponent::saveButtonClicked()
+{
+	FileChooser configFileChooser("Pick file to save", File(), "*.config");
+	bool success = configFileChooser.browseForFileToSave(true);
+
+	if (success) {
+		Config config;
+		File configFile = configFileChooser.getResult();
+		config.serialize(audioSource, configFile);
+	}
+	else {
+		AlertWindow::showMessageBox(AlertWindow::InfoIcon, String("Save Fail"), String("Fail to select file to save!"));
+	}
+}
+
+void MainComponent::loadButtonClicked()
+{
+	FileChooser configFileChooser("Pick file to load", File(), "*.config");
+	bool success = configFileChooser.browseForFileToOpen();
+
+	if (success) {
+		Config config;
+		File configFile = configFileChooser.getResult();
+		config.deserialize(audioSource, configFile);
+
+		reload();
+	}
+	else {
+		AlertWindow::showMessageBox(AlertWindow::InfoIcon, String("Save Load"), String("Fail to load selected file!"));
+	}
+}
+
+void MainComponent::reload()
+{
+	groupList.clear();
+	Array<String> groupNameList = audioSource.getGroupManager()->getAllGroupNames();
+	groupList.addItemList(StringArray(groupNameList), 1);
+
+	groupNameTextEditor.clear();
+	groupNameTextEditor.repaint();
 }

@@ -9,7 +9,7 @@ AudioReader::AudioReader()
 
 AudioReader::~AudioReader() {}
 
-void AudioReader::load(Synthesiser& synth, const String& dirPath, Group& group, MidiKeyboardComponent& /*keyboardComponent*/)
+void AudioReader::loadDir(Synthesiser& synth, const String& dirPath, Group& group, MidiKeyboardComponent& /*keyboardComponent*/)
 {
 	const Array<File>& files = getAllFiles(dirPath);
 	for (File file : files)
@@ -22,6 +22,16 @@ void AudioReader::load(Synthesiser& synth, const String& dirPath, Group& group, 
 		GroupSamplerSound* sound = parseFileName(file, group);
 		synth.addSound(sound);
 	}
+}
+
+void AudioReader::loadFile(Synthesiser& synth, const String& filePath, Group& group, MidiKeyboardComponent& /*keyboardComponent*/)
+{
+	File file(filePath);
+	if (file.getFileExtension() != ".wav") {
+		return;
+	}
+	GroupSamplerSound* sound = parseFileName(file, group);
+	synth.addSound(sound);
 }
 
 Array<File> AudioReader::getAllFiles(const String& path)
@@ -60,5 +70,5 @@ GroupSamplerSound* AudioReader::parseFileName(File& file, Group& group)
 	note.setRange(startKey, numKey, true);
 
 	// finally, add our sound
-	return new GroupSamplerSound(group.getGroupName() + String(rootKey), *reader, note, rootKey, 0, 0, 100.0, group);
+	return new GroupSamplerSound(group.getGroupName() + String(rootKey), *reader, note, rootKey, 0, 0, 100.0, group, file.getFullPathName());
 }
