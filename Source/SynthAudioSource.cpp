@@ -2,6 +2,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SynthAudioSource.h"
+#include "GroupSamplerVoice.h"
 
 const ReferenceCountedArray<SynthesiserSound>& GroupSynthesiser::getAllSounds() const
 {
@@ -13,7 +14,7 @@ SynthAudioSource::SynthAudioSource(MidiKeyboardState& keyboardState, MidiKeyboar
 	, keyboardComponent(keyboardComponent)
 {
 	for (auto i = 0; i < 4; ++i)
-		synth.addVoice(new SamplerVoice());	
+		synth.addVoice(new GroupSamplerVoice());	
 }
 
 void SynthAudioSource::loadDir(const String& dirPath, const String& groupName)

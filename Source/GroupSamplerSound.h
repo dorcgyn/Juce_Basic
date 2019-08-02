@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Eq.h"
 
 namespace juce
 {
@@ -25,6 +26,8 @@ namespace juce
 		void addActiveMidiNote(int midiNote);
 		bool isActiveMidiKey(int midiNote) const;
 
+		EqContainer* getEqContainer();
+
 		ValueTree* serailzeToValueTree() const;
 
 	private:
@@ -36,6 +39,7 @@ namespace juce
 		bool enable;
 		SortedSet<int> activeMidiNotes;
 		Colour keyColour;
+		EqContainer eqContainer;
 	};
 
 	class GroupSamplerSound : public SamplerSound
@@ -72,8 +76,11 @@ namespace juce
 		/** Destructor. */
 		~GroupSamplerSound() override;
 
+		// Overwrite methods
 		bool appliesToNote(int midiNoteNumber) override;
+		void applyEffect(AudioBuffer<float>* outputBuffer, int startSample, int numSamples) const noexcept;
 		
+		EqContainer* getEqContainer();
 		ValueTree* serailzeToValueTree() const;
 
 	private:
@@ -82,6 +89,7 @@ namespace juce
 		double attackTimeSecs;
 		double releaseTimeSecs;
 		double maxSampleLengthSeconds;
+		EqContainer eqContainer;
 	};
 
 	class GroupManager

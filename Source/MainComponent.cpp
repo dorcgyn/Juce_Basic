@@ -11,11 +11,11 @@
 
 //==============================================================================
 MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard)
-	, audioSource(keyboardState, keyboardComponent)
+, audioSource(keyboardState, keyboardComponent)
 {
-    // Make sure you set the size of the component after
-    // you add any child components.
-    setSize (800, 600);
+	// Make sure you set the size of the component after
+	// you add any child components.
+	setSize(800, 600);
 
 	addAndMakeVisible(&loadAudioButton);
 	loadAudioButton.setButtonText("Load Audio Group");
@@ -28,13 +28,11 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 	addAndMakeVisible(&loadButton);
 	loadButton.setButtonText("Load");
 	loadButton.onClick = [this] { loadButtonClicked(); };
-	
+
 	addAndMakeVisible(&groupNameTextEditor);
 	addAndMakeVisible(&groupNameLabel);
 	groupNameLabel.setText("New Group Name", dontSendNotification);
 	groupNameLabel.attachToComponent(&groupNameTextEditor, true);
-
-	addAndMakeVisible(keyboardComponent);
 
 	// VERY VERY important
 	setAudioChannels(0, 2);
@@ -46,6 +44,7 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 	deviceManager.addMidiInputCallback(newInput, audioSource.getMidiCollector());
 
 	// keyboard color
+	addAndMakeVisible(keyboardComponent);
 	keyboardComponent.setGroupManager(audioSource.getGroupManager());
 
 	// pick group combobox
@@ -64,7 +63,31 @@ MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardCo
 		audioSource.getGroupManager()->disableAll();
 		audioSource.getGroupManager()->enableByName(itemText);
 		keyboardComponent.repaint();
+
+		// setup eqSlider value
+		Group* group = audioSource.getGroupManager()->getGroup(itemText);
+		EnhanceEq* eq = dynamic_cast<EnhanceEq*>(group->getEqContainer()->getEq());
+		eqSlider.setValue(eq->getMultiplex(), dontSendNotification);
 	};
+
+	// EQ Slider value update
+	addAndMakeVisible(&eqSlider);
+	addAndMakeVisible(&eqLabel);
+	eqLabel.setText("Eq value", dontSendNotification);
+	eqLabel.attachToComponent(&eqSlider, true);
+
+	eqSlider.onValueChange = [this] {
+		int selectedIndex = groupList.getSelectedItemIndex();
+		if (selectedIndex < 0) return;
+		String itemText = groupList.getItemText(selectedIndex);
+		Group* group = audioSource.getGroupManager()->getGroup(itemText);
+		EqContainer* eqContainer = group->getEqContainer();
+		EnhanceEq* eq = dynamic_cast<EnhanceEq*>(eqContainer->getEq());
+
+		double value = eqSlider.getValue();
+		eq->setMultiplex(value);
+	};
+
 }
 
 MainComponent::~MainComponent()
@@ -127,6 +150,8 @@ void MainComponent::resized()
 	loadButton.setBounds(10, 120, getWidth() - 20, 20);
 
 	groupList.setBounds(200, 500, getWidth() - 210, 20);
+
+	eqSlider.setBounds(10, 200, getWidth() - 20, 20);
 
 	auto area = getLocalBounds();
 	keyboardComponent.setBounds(area.removeFromBottom(80).reduced(8));

@@ -41,6 +41,18 @@ bool GroupSamplerSound::appliesToNote(int midiNoteNumber)
 	return false;
 }
 
+void GroupSamplerSound::applyEffect(AudioBuffer<float>* outputBuffer, int startSample, int numSamples) const noexcept
+{
+	EqContainer* groupEqContainer = group.getEqContainer();
+	groupEqContainer->apply(outputBuffer, startSample, numSamples);
+	eqContainer.apply(outputBuffer, startSample, numSamples);
+}
+
+EqContainer* GroupSamplerSound::getEqContainer()
+{
+	return &eqContainer;
+}
+
 ValueTree* GroupSamplerSound::serailzeToValueTree() const
 {
 	ValueTree* soundValueTree = new ValueTree{"Sound"};
@@ -97,6 +109,11 @@ void Group::addActiveMidiNote(int midiNote)
 bool Group::isActiveMidiKey(int midiNote) const
 {
 	return this->activeMidiNotes.contains(midiNote);
+}
+
+EqContainer* Group::getEqContainer()
+{
+	return &eqContainer;
 }
 
 ValueTree* Group::serailzeToValueTree() const

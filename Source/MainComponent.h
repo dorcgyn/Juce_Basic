@@ -54,6 +54,9 @@ private:
 	ComboBox groupList;
 	Label groupListLabel;
 
+	Slider eqSlider;
+	Label eqLabel;
+
 	MidiKeyboardState keyboardState;  
 	ColourMidiKeyboardComponent keyboardComponent;
 
